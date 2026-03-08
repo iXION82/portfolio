@@ -151,6 +151,8 @@ export default function SpaceBackground() {
     return (
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
             <Canvas
+                eventSource={document.getElementById('root')!}
+                eventPrefix="client"
                 camera={{ position: [0, 0, 8], fov: 60 }}
                 gl={{
                     antialias: false, // pixelated feel

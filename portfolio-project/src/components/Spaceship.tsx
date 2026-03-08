@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -13,6 +13,25 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
     const velocityRef = useRef(new THREE.Vector3(0, 0, 0));
     const { camera, size } = useThree();
 
+    const mouseRef = useRef(new THREE.Vector2());
+    const targetPosition = useRef(new THREE.Vector3());
+
+    // Use a global window event listener to bypass any CSS/Canvas pointer-events issues
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            // Normalize mouse coordinates to -1 to +1
+            mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        };
+
+        window.addEventListener('pointermove', handleMouseMove);
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('pointermove', handleMouseMove);
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
     // Engine trail particles
     const trailParticles = useMemo(() => {
         return Array.from({ length: 12 }, () => ({
@@ -25,14 +44,15 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
 
     const trailMeshRefs = useRef<(THREE.Mesh | null)[]>([]);
 
-    useFrame((state, delta) => {
+    useFrame((_, delta) => {
         if (!groupRef.current) return;
 
-        // Convert mouse position to world coordinates on the z=0 plane
-        const mouse = state.pointer;
-        const vector = new THREE.Vector3(mouse.x, mouse.y, 0.5);
-        vector.unproject(camera);
-        const dir = vector.sub(camera.position).normalize();
+        // Convert normalized mouse coordinates to 3D world space
+        targetPosition.current.set(mouseRef.current.x, mouseRef.current.y, 0.5);
+        targetPosition.current.unproject(camera);
+
+        // We want the ship to stay on the z=0 plane, so we calculate the intersection
+        const dir = targetPosition.current.sub(camera.position).normalize();
         const distance = -camera.position.z / dir.z;
         const worldPos = camera.position.clone().add(dir.multiplyScalar(distance));
 
@@ -152,7 +172,7 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
             {/* Engine trail particles */}
             {trailParticles.map((_, i) => (
                 <mesh
-                    key={`trail-${i}`}
+                    key={`trail - ${i} `}
                     ref={(el) => { trailMeshRefs.current[i] = el; }}
                 >
                     <boxGeometry args={[1, 1, 1]} />
