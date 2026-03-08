@@ -101,6 +101,24 @@ function NebulaPlane({
 /* Scene contents */
 function Scene() {
     const shipPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+    const shipDirectionRef = useRef(new THREE.Vector3(0, 1, 0));
+    const laserStateRef = useRef({ active: false, timestamp: 0 });
+    const screenShakeRef = useRef(0);
+
+    // Apply screen shake to camera
+    useFrame((state, delta) => {
+        if (screenShakeRef.current > 0.01) {
+            const magnitude = screenShakeRef.current;
+            state.camera.position.x = (Math.random() - 0.5) * magnitude;
+            state.camera.position.y = (Math.random() - 0.5) * magnitude;
+            screenShakeRef.current = THREE.MathUtils.lerp(screenShakeRef.current, 0, delta * 5); // decay
+        } else {
+            // Smoothly return to center
+            screenShakeRef.current = 0;
+            state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, 0, delta * 5);
+            state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, 0, delta * 5);
+        }
+    });
 
     return (
         <>
@@ -157,8 +175,17 @@ function Scene() {
             />
 
             {/* Interactive elements */}
-            <Spaceship shipPositionRef={shipPositionRef} />
-            <Meteorites shipPositionRef={shipPositionRef} />
+            <Spaceship
+                shipPositionRef={shipPositionRef}
+                shipDirectionRef={shipDirectionRef}
+                laserStateRef={laserStateRef}
+                screenShakeRef={screenShakeRef}
+            />
+            <Meteorites
+                shipPositionRef={shipPositionRef}
+                shipDirectionRef={shipDirectionRef}
+                laserStateRef={laserStateRef}
+            />
         </>
     );
 }

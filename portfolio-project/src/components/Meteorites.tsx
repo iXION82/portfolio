@@ -5,6 +5,8 @@ import Explosion from './Explosion';
 
 interface MeteoritesProps {
     shipPositionRef: React.MutableRefObject<THREE.Vector3>;
+    shipDirectionRef: React.MutableRefObject<THREE.Vector3>;
+    laserStateRef: React.MutableRefObject<{ active: boolean; timestamp: number }>;
 }
 
 interface Meteorite {
@@ -73,7 +75,7 @@ function createMeteorite(): Meteorite {
     };
 }
 
-export default function Meteorites({ shipPositionRef }: MeteoritesProps) {
+export default function Meteorites({ shipPositionRef, shipDirectionRef, laserStateRef }: MeteoritesProps) {
     const meteoritesRef = useRef<Meteorite[]>(
         Array.from({ length: METEORITE_COUNT }, () => createMeteorite())
     );
@@ -89,7 +91,16 @@ export default function Meteorites({ shipPositionRef }: MeteoritesProps) {
     useFrame((_, delta) => {
         const meteorites = meteoritesRef.current;
         const shipPos = shipPositionRef.current;
+        const shipDir = shipDirectionRef.current;
+        const laserActive = laserStateRef.current.active;
         let needsRerender = false;
+
+        // Laser mathematical bounds setup
+        const laserStart = shipPos;
+        // The laser visually extends about half the screen, around 7.5 world units
+        const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(7.5));
+        const laserLine = new THREE.Line3(laserStart, laserEnd);
+        const closestPoint = new THREE.Vector3();
 
         // Update respawn timers
         respawnTimers.current.forEach((timer, index) => {
@@ -129,12 +140,30 @@ export default function Meteorites({ shipPositionRef }: MeteoritesProps) {
                 return;
             }
 
-            // Collision detection with spaceship (ignore Z depth for hit test)
+            let hit = false;
+
+            // 1. Collision detection with spaceship (ignore Z depth for hit test)
             const dx = m.position.x - shipPos.x;
             const dy = m.position.y - shipPos.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < COLLISION_DISTANCE + m.scale * 0.5) {
+                hit = true;
+            }
+
+            // 2. Collision detection with laser
+            if (!hit && laserActive) {
+                laserLine.closestPointToPoint(m.position, true, closestPoint);
+                const ldx = m.position.x - closestPoint.x;
+                const ldy = m.position.y - closestPoint.y;
+                const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
+                // Laser beam has some thickness tolerance
+                if (ldist < m.scale * 0.5 + 0.4) {
+                    hit = true;
+                }
+            }
+
+            if (hit) {
                 // Explode!
                 m.active = false;
                 setExplosions((prev) => [

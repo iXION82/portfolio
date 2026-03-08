@@ -4,9 +4,17 @@ import * as THREE from 'three';
 
 interface SpaceshipProps {
     shipPositionRef: React.MutableRefObject<THREE.Vector3>;
+    shipDirectionRef: React.MutableRefObject<THREE.Vector3>;
+    laserStateRef: React.MutableRefObject<{ active: boolean; timestamp: number }>;
+    screenShakeRef: React.MutableRefObject<number>;
 }
 
-export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
+export default function Spaceship({
+    shipPositionRef,
+    shipDirectionRef,
+    laserStateRef,
+    screenShakeRef
+}: SpaceshipProps) {
     const parentRef = useRef<THREE.Group>(null);
     const modelRef = useRef<THREE.Group>(null);
     const targetRef = useRef(new THREE.Vector3(0, 0, 0));
@@ -17,18 +25,42 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
     const mouseRef = useRef(new THREE.Vector2());
     const targetPosition = useRef(new THREE.Vector3());
 
-    // Global event listener for accurate mouse capture
+    // Laser states
+    const isChargingRef = useRef(false);
+    const chargeLevelRef = useRef(0);
+    const laserVisualRef = useRef<THREE.Mesh>(null);
+    const laserGlowRef = useRef<THREE.Mesh>(null);
+
+    // Global event listener for accurate mouse capture and keyboard
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
             mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
         };
 
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Use 'f' or 'F' key
+            if (e.code === 'KeyF') {
+                isChargingRef.current = true;
+            }
+        };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.code === 'KeyF') {
+                isChargingRef.current = false;
+                chargeLevelRef.current = 0; // abort charge if released early
+            }
+        };
+
         window.addEventListener('pointermove', handleMouseMove);
         window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
         return () => {
             window.removeEventListener('pointermove', handleMouseMove);
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
 
@@ -92,6 +124,49 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
         model.rotation.y = THREE.MathUtils.lerp(model.rotation.y, targetRoll, lerpFactor * 0.7);
 
         previousZ.current = parent.rotation.z;
+
+        // Update precise forward direction for laser targeting
+        // After applying quaternions, the ship's local +Y axis is global forward
+        const forward = new THREE.Vector3(0, 1, 0).applyQuaternion(parent.quaternion).normalize();
+        shipDirectionRef.current.copy(forward);
+
+        // --- Laser weapon charging & firing logic ---
+        if (isChargingRef.current) {
+            chargeLevelRef.current += delta * 2; // fully charged in 0.5 sec
+            if (chargeLevelRef.current >= 1.0) {
+                // FIRE THE LASER!
+                laserStateRef.current = { active: true, timestamp: performance.now() };
+                screenShakeRef.current = 0.5; // Trigger global screen shake
+                chargeLevelRef.current = 0; // Reset charge to allow continuous fire if holding
+            }
+        } else {
+            // Lose charge quickly if released before firing
+            chargeLevelRef.current = Math.max(0, chargeLevelRef.current - delta * 3);
+        }
+
+        // --- Handle Visualizing the Laser ---
+        if (laserVisualRef.current && laserGlowRef.current) {
+            // Charging glow at tip of the nose
+            const glowMat = laserGlowRef.current.material as THREE.MeshStandardMaterial;
+            laserGlowRef.current.scale.setScalar(chargeLevelRef.current || 0.01);
+            glowMat.opacity = chargeLevelRef.current * 0.8;
+
+            // Firing laser beam
+            const beamMat = laserVisualRef.current.material as THREE.MeshBasicMaterial;
+            const timeSinceFire = (performance.now() - laserStateRef.current.timestamp) / 1000;
+
+            // The laser stays visible for 0.15 seconds
+            if (laserStateRef.current.active && timeSinceFire < 0.15) {
+                const lifeRatio = 1 - (timeSinceFire / 0.15);
+                beamMat.opacity = lifeRatio;
+                laserVisualRef.current.scale.x = lifeRatio; // Shrink horizontally as it fades
+                laserVisualRef.current.scale.z = lifeRatio;
+                laserVisualRef.current.visible = true;
+            } else {
+                laserStateRef.current.active = false;
+                laserVisualRef.current.visible = false;
+            }
+        }
 
         // Update trail particles
         trailParticles.forEach((p, i) => {
@@ -188,6 +263,18 @@ export default function Spaceship({ shipPositionRef }: SpaceshipProps) {
                     <mesh position={[s * 3.4, s * 0.2, -s * 0.2]}>
                         <boxGeometry args={[s * 0.4, s * 2, s * 0.4]} />
                         <meshStandardMaterial color="#ff1744" emissive="#d50000" emissiveIntensity={0.8} flatShading />
+                    </mesh>
+
+                    {/* Laser charging glow at nose tip */}
+                    <mesh ref={laserGlowRef} position={[0, s * 4, 0]}>
+                        <sphereGeometry args={[s * 1.5, 8, 8]} />
+                        <meshStandardMaterial color="#00e676" emissive="#00e676" emissiveIntensity={4} transparent opacity={0} />
+                    </mesh>
+
+                    {/* Firing Laser Beam */}
+                    <mesh ref={laserVisualRef} position={[0, s * 20 + s * 3.5, 0]} visible={false}>
+                        <boxGeometry args={[s * 1.2, s * 40, s * 1.2]} />
+                        <meshBasicMaterial color="#00e676" transparent opacity={0.8} />
                     </mesh>
                 </group>
             </group>
