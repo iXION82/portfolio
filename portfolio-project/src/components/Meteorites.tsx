@@ -18,6 +18,8 @@ interface Meteorite {
     rotation: THREE.Euler;
     rotationSpeed: THREE.Vector3;
     scale: number;
+    distortion: [number, number, number];
+    geometryType: number;
     color: THREE.Color;
     active: boolean;
 }
@@ -72,6 +74,12 @@ function createMeteorite(): Meteorite {
             (Math.random() - 0.5) * 2
         ),
         scale: 0.2 + Math.random() * 0.35,
+        distortion: [
+            1 + (Math.random() - 0.5) * 0.5,
+            1 + (Math.random() - 0.5) * 0.5,
+            1 + (Math.random() - 0.5) * 0.5
+        ] as [number, number, number],
+        geometryType: Math.floor(Math.random() * 4),
         color: colors[Math.floor(Math.random() * colors.length)],
         active: true,
     };
@@ -103,8 +111,8 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
 
         if (laserActive) {
             if (weaponType === 'sniper') {
-                // Sniper crosses the whole screen
-                const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(40));
+                // Sniper is buffed to be much longer across the screen
+                const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(60));
                 laserLines.push(new THREE.Line3(laserStart, laserEnd));
             } else if (weaponType === 'shotgun') {
                 // Shotgun has shorter range (20% screen size roughly), wider spread
@@ -186,8 +194,8 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
                     const ldy = m.position.y - closestPoint.y;
                     const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
 
-                    // Sniper is thinner, shotgun/laser have standard thickness tolerance
-                    const tolerance = weaponType === 'sniper' ? 0.2 : 0.4;
+                    // Sniper is newly buffed and very thick, default is standard
+                    const tolerance = weaponType === 'sniper' ? 1.2 : 0.4;
                     if (ldist < m.scale * 0.5 + tolerance) {
                         hit = true;
                         break;
@@ -226,9 +234,12 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
                         ref={(el) => { meshRefs.current[i] = el; }}
                         position={m.position.toArray() as [number, number, number]}
                         rotation={[m.rotation.x, m.rotation.y, m.rotation.z]}
-                        scale={m.scale}
+                        scale={[m.scale * m.distortion[0], m.scale * m.distortion[1], m.scale * m.distortion[2]]}
                     >
-                        <icosahedronGeometry args={[1, 0]} />
+                        {m.geometryType === 0 && <icosahedronGeometry args={[1, 0]} />}
+                        {m.geometryType === 1 && <dodecahedronGeometry args={[1, 0]} />}
+                        {m.geometryType === 2 && <octahedronGeometry args={[1, 0]} />}
+                        {m.geometryType === 3 && <tetrahedronGeometry args={[1, 0]} />}
                         <meshStandardMaterial
                             color={m.color}
                             emissive={m.color}

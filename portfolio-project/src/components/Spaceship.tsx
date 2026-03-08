@@ -392,8 +392,8 @@ export default function Spaceship({
                         )}
 
                         {weaponType === 'sniper' && (
-                            <mesh position={[0, s * 40 + s * 3.5, 0]}>
-                                <boxGeometry args={[s * 0.4, s * 80, s * 0.4]} />
+                            <mesh position={[0, s * 60 + s * 3.5, 0]}>
+                                <boxGeometry args={[s * 3.0, s * 120, s * 3.0]} />
                                 <meshBasicMaterial color="#2979ff" transparent opacity={0.9} />
                             </mesh>
                         )}
