@@ -129,8 +129,11 @@ export default function Meteorites({ shipPositionRef }: MeteoritesProps) {
                 return;
             }
 
-            // Collision detection with spaceship
-            const dist = m.position.distanceTo(shipPos);
+            // Collision detection with spaceship (ignore Z depth for hit test)
+            const dx = m.position.x - shipPos.x;
+            const dy = m.position.y - shipPos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
             if (dist < COLLISION_DISTANCE + m.scale * 0.5) {
                 // Explode!
                 m.active = false;

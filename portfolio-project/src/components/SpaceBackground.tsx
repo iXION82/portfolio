@@ -103,40 +103,40 @@ function Scene() {
 
             {/* Planets */}
             <Planet
-                radius={1.2}
-                color="#7c4dff"
-                emissive="#4a148c"
-                position={[-7, 4, -10]}
+                radius={2.0}
+                color="#b388ff"
+                emissive="#7c4dff"
+                position={[-7, 5, -12]}
                 orbitSpeed={0.08}
                 orbitRadius={1.5}
             />
             <Planet
-                radius={0.8}
-                color="#ff6f00"
-                emissive="#e65100"
-                position={[8, -3, -12]}
+                radius={1.6}
+                color="#ffb300"
+                emissive="#ff6f00"
+                position={[8, -4, -14]}
                 orbitSpeed={0.12}
-                orbitRadius={1}
+                orbitRadius={1.2}
             />
             <Planet
-                radius={1.5}
-                color="#00897b"
-                emissive="#004d40"
-                position={[3, 6, -15]}
+                radius={2.8}
+                color="#1de9b6"
+                emissive="#00bfa5"
+                position={[4, 7, -18]}
                 orbitSpeed={0.05}
-                orbitRadius={2}
+                orbitRadius={2.5}
             />
 
             {/* Ring for the big planet */}
-            <mesh position={[3, 6, -15]} rotation={[1.2, 0.3, 0]}>
-                <torusGeometry args={[2.2, 0.15, 6, 16]} />
+            <mesh position={[4, 7, -18]} rotation={[1.2, 0.3, 0]}>
+                <torusGeometry args={[4.2, 0.2, 8, 24]} />
                 <meshStandardMaterial
-                    color="#26a69a"
-                    emissive="#26a69a"
-                    emissiveIntensity={0.3}
+                    color="#b2dfdb"
+                    emissive="#004d40"
+                    emissiveIntensity={0.8}
                     flatShading
                     transparent
-                    opacity={0.6}
+                    opacity={0.8}
                 />
             </mesh>
 
