@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* ── Custom fonts ── */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+}
+
+/* ── Theme tokens via Tailwind v4 ── */
+@theme {
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --color-space-900: #05050f;
+  --color-space-800: #0a0a1a;
+  --color-space-700: #111125;
+}
+
+/* ── Base styles ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-space-900);
+  color: #e0e0e0;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Hide default cursor over the canvas for immersion */
+canvas {
+  cursor: none;
+}
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-space-900);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 77, 255, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 77, 255, 0.5);
+}
+
+/* ── Glassmorphism card ── */
+.glass-card {
+  background: rgba(10, 10, 30, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  border-color: rgba(34, 211, 238, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(34, 211, 238, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* ── Float animation ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* ── Scanline overlay for retro feel ── */
+#portfolio-content::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* ── Selection color ── */
+::selection {
+  background: rgba(124, 77, 255, 0.3);
+  color: #ffffff;
+}
