@@ -13,6 +13,9 @@ function Planet({
     position,
     orbitSpeed,
     orbitRadius,
+    hasRing,
+    ringColor,
+    ringEmissive,
 }: {
     radius: number;
     color: string;
@@ -20,29 +23,52 @@ function Planet({
     position: [number, number, number];
     orbitSpeed: number;
     orbitRadius: number;
+    hasRing?: boolean;
+    ringColor?: string;
+    ringEmissive?: string;
 }) {
-    const ref = useRef<THREE.Mesh>(null);
+    const groupRef = useRef<THREE.Group>(null);
+    const planetRef = useRef<THREE.Mesh>(null);
     const initialAngle = useMemo(() => Math.random() * Math.PI * 2, []);
 
     useFrame((state) => {
-        if (!ref.current) return;
+        if (!groupRef.current || !planetRef.current) return;
         const t = state.clock.elapsedTime * orbitSpeed + initialAngle;
-        ref.current.position.x = position[0] + Math.cos(t) * orbitRadius;
-        ref.current.position.y = position[1] + Math.sin(t) * orbitRadius * 0.4;
-        ref.current.rotation.y = t * 0.5;
+
+        // Move the entire group (planet + ring)
+        groupRef.current.position.x = position[0] + Math.cos(t) * orbitRadius;
+        groupRef.current.position.y = position[1] + Math.sin(t) * orbitRadius * 0.4;
+
+        // Self-rotation of the planet
+        planetRef.current.rotation.y = t * 0.5;
     });
 
     return (
-        <mesh ref={ref} position={position}>
-            <icosahedronGeometry args={[radius, 1]} />
-            <meshStandardMaterial
-                color={color}
-                emissive={emissive}
-                emissiveIntensity={0.3}
-                flatShading
-                roughness={0.7}
-            />
-        </mesh>
+        <group ref={groupRef} position={position}>
+            <mesh ref={planetRef}>
+                <icosahedronGeometry args={[radius, 1]} />
+                <meshStandardMaterial
+                    color={color}
+                    emissive={emissive}
+                    emissiveIntensity={0.3}
+                    flatShading
+                    roughness={0.7}
+                />
+            </mesh>
+            {hasRing && (
+                <mesh rotation={[1.2, 0.3, 0]}>
+                    <torusGeometry args={[4.2, 0.2, 8, 24]} />
+                    <meshStandardMaterial
+                        color={ringColor}
+                        emissive={ringEmissive}
+                        emissiveIntensity={0.8}
+                        flatShading
+                        transparent
+                        opacity={0.8}
+                    />
+                </mesh>
+            )}
+        </group>
     );
 }
 
@@ -125,20 +151,10 @@ function Scene() {
                 position={[4, 7, -18]}
                 orbitSpeed={0.05}
                 orbitRadius={2.5}
+                hasRing={true}
+                ringColor="#b2dfdb"
+                ringEmissive="#004d40"
             />
-
-            {/* Ring for the big planet */}
-            <mesh position={[4, 7, -18]} rotation={[1.2, 0.3, 0]}>
-                <torusGeometry args={[4.2, 0.2, 8, 24]} />
-                <meshStandardMaterial
-                    color="#b2dfdb"
-                    emissive="#004d40"
-                    emissiveIntensity={0.8}
-                    flatShading
-                    transparent
-                    opacity={0.8}
-                />
-            </mesh>
 
             {/* Interactive elements */}
             <Spaceship shipPositionRef={shipPositionRef} />
