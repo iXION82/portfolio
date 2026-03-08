@@ -1,10 +1,20 @@
+import { useState } from 'react';
 import SpaceBackground from './components/SpaceBackground';
 import './App.css';
 
+export type ThemeType = 'neon' | 'dark' | 'synthwave';
+export type ShipModelType = 'fighter' | 'saucer' | 'blocky';
+export type WeaponType = 'default' | 'shotgun' | 'sniper';
+
 function App() {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [theme, setTheme] = useState<ThemeType>('neon');
+  const [shipModel, setShipModel] = useState<ShipModelType>('fighter');
+  const [weaponType, setWeaponType] = useState<WeaponType>('default');
+
   return (
     <>
-      <SpaceBackground />
+      <SpaceBackground theme={theme} shipModel={shipModel} weaponType={weaponType} />
 
       {/* Portfolio content overlay */}
       <div className="relative z-10 min-h-screen overflow-y-auto pointer-events-none" id="portfolio-content">
@@ -20,9 +30,93 @@ function App() {
               <a href="#about" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">ABOUT</a>
               <a href="#projects" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">PROJECTS</a>
               <a href="#contact" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">CONTACT</a>
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="text-xs font-pixel text-purple-400 hover:text-cyan-400 transition-colors duration-300 ml-4 flex items-center gap-2"
+              >
+                ⚙ SETTINGS
+              </button>
             </div>
           </div>
         </nav>
+
+        {/* Settings Modal Setup */}
+        {isSettingsOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto cursor-auto">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)}></div>
+            <div className="relative glass-card w-full max-w-2xl p-8 border border-cyan-400/30 animate-scale-in">
+              <button
+                onClick={() => setIsSettingsOpen(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white font-pixel text-xl"
+              >
+                ×
+              </button>
+
+              <h2 className="font-pixel text-xl text-cyan-400 mb-8 border-b border-white/10 pb-4">
+                SYSTEM SETTINGS
+              </h2>
+
+              <div className="space-y-8">
+                {/* Theme Selection */}
+                <div>
+                  <h3 className="font-pixel text-sm text-gray-300 mb-4">COLOR THEME</h3>
+                  <div className="flex gap-4">
+                    {(['neon', 'dark', 'synthwave'] as ThemeType[]).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setTheme(t)}
+                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${theme === t
+                          ? 'bg-cyan-500/30 border border-cyan-400 text-white shadow-[0_0_15px_rgba(34,211,238,0.4)]'
+                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
+                          }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Ship Model Selection */}
+                <div>
+                  <h3 className="font-pixel text-sm text-gray-300 mb-4">SHIP CHASSIS</h3>
+                  <div className="flex gap-4">
+                    {(['fighter', 'saucer', 'blocky'] as ShipModelType[]).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setShipModel(s)}
+                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${shipModel === s
+                          ? 'bg-purple-500/30 border border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
+                          }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weapon Selection */}
+                <div>
+                  <h3 className="font-pixel text-sm text-gray-300 mb-4">WEAPON SYSTEM</h3>
+                  <div className="flex gap-4">
+                    {(['default', 'shotgun', 'sniper'] as WeaponType[]).map((w) => (
+                      <button
+                        key={w}
+                        onClick={() => setWeaponType(w)}
+                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${weaponType === w
+                          ? 'bg-green-500/30 border border-green-400 text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]'
+                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
+                          }`}
+                      >
+                        {w}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Hero Section */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 text-center pointer-events-auto">

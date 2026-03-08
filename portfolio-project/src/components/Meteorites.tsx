@@ -2,11 +2,13 @@ import { useRef, useState, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import Explosion from './Explosion';
+import type { WeaponType } from '../App';
 
 interface MeteoritesProps {
     shipPositionRef: React.MutableRefObject<THREE.Vector3>;
     shipDirectionRef: React.MutableRefObject<THREE.Vector3>;
     laserStateRef: React.MutableRefObject<{ active: boolean; timestamp: number }>;
+    weaponType: WeaponType;
 }
 
 interface Meteorite {
@@ -75,7 +77,7 @@ function createMeteorite(): Meteorite {
     };
 }
 
-export default function Meteorites({ shipPositionRef, shipDirectionRef, laserStateRef }: MeteoritesProps) {
+export default function Meteorites({ shipPositionRef, shipDirectionRef, laserStateRef, weaponType }: MeteoritesProps) {
     const meteoritesRef = useRef<Meteorite[]>(
         Array.from({ length: METEORITE_COUNT }, () => createMeteorite())
     );
@@ -97,9 +99,34 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
 
         // Laser mathematical bounds setup
         const laserStart = shipPos;
-        // The laser visually extends about half the screen, around 7.5 world units
-        const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(7.5));
-        const laserLine = new THREE.Line3(laserStart, laserEnd);
+        const laserLines: THREE.Line3[] = [];
+
+        if (laserActive) {
+            if (weaponType === 'sniper') {
+                // Sniper crosses the whole screen
+                const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(40));
+                laserLines.push(new THREE.Line3(laserStart, laserEnd));
+            } else if (weaponType === 'shotgun') {
+                // Shotgun has shorter range (20% screen size roughly), wider spread
+                const centerEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(3.0));
+                laserLines.push(new THREE.Line3(laserStart, centerEnd));
+
+                // Right angle spread (wider)
+                const rightDir = shipDir.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), -0.6);
+                const rightEnd = shipPos.clone().add(rightDir.multiplyScalar(2.5));
+                laserLines.push(new THREE.Line3(laserStart, rightEnd));
+
+                // Left angle spread (wider)
+                const leftDir = shipDir.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), 0.6);
+                const leftEnd = shipPos.clone().add(leftDir.multiplyScalar(2.5));
+                laserLines.push(new THREE.Line3(laserStart, leftEnd));
+            } else {
+                // Default laser
+                const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(7.5));
+                laserLines.push(new THREE.Line3(laserStart, laserEnd));
+            }
+        }
+
         const closestPoint = new THREE.Vector3();
 
         // Update respawn timers
@@ -153,13 +180,18 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
 
             // 2. Collision detection with laser
             if (!hit && laserActive) {
-                laserLine.closestPointToPoint(m.position, true, closestPoint);
-                const ldx = m.position.x - closestPoint.x;
-                const ldy = m.position.y - closestPoint.y;
-                const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
-                // Laser beam has some thickness tolerance
-                if (ldist < m.scale * 0.5 + 0.4) {
-                    hit = true;
+                for (const line of laserLines) {
+                    line.closestPointToPoint(m.position, true, closestPoint);
+                    const ldx = m.position.x - closestPoint.x;
+                    const ldy = m.position.y - closestPoint.y;
+                    const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
+
+                    // Sniper is thinner, shotgun/laser have standard thickness tolerance
+                    const tolerance = weaponType === 'sniper' ? 0.2 : 0.4;
+                    if (ldist < m.scale * 0.5 + tolerance) {
+                        hit = true;
+                        break;
+                    }
                 }
             }
 
