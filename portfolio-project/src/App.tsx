@@ -16,10 +16,8 @@ function App() {
     <>
       <SpaceBackground theme={theme} shipModel={shipModel} weaponType={weaponType} />
 
-      {/* Portfolio content overlay */}
       <div className="relative z-10 min-h-screen overflow-y-auto pointer-events-none" id="portfolio-content">
 
-        {/* Navigation */}
         <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/30 border-b border-white/5 pointer-events-auto">
           <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <span className="font-pixel text-sm text-cyan-400 tracking-wider">
@@ -40,7 +38,6 @@ function App() {
           </div>
         </nav>
 
-        {/* Settings Modal Setup */}
         {isSettingsOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto cursor-auto">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)}></div>
@@ -57,7 +54,6 @@ function App() {
               </h2>
 
               <div className="space-y-8">
-                {/* Theme Selection */}
                 <div>
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">COLOR THEME</h3>
                   <div className="flex gap-4">
@@ -76,7 +72,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Ship Model Selection */}
                 <div>
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">SHIP CHASSIS</h3>
                   <div className="flex gap-4">
@@ -95,7 +90,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Weapon Selection */}
                 <div>
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">WEAPON SYSTEM</h3>
                   <div className="flex gap-4">
@@ -118,7 +112,6 @@ function App() {
           </div>
         )}
 
-        {/* Hero Section */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 text-center pointer-events-auto">
           <div className="animate-float">
             <p className="font-pixel text-xs text-purple-400 tracking-[0.3em] mb-4 uppercase">Welcome to my universe</p>
@@ -149,7 +142,6 @@ function App() {
           </div>
         </section>
 
-        {/* About Section */}
         <section id="about" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="glass-card max-w-4xl w-full p-8 md:p-12">
             <h2 className="font-pixel text-xl text-cyan-400 mb-8 flex items-center gap-3">
@@ -157,16 +149,14 @@ function App() {
             </h2>
 
             <div className="flex flex-col md:flex-row gap-10 items-start">
-              {/* Profile Picture */}
               <div className="w-full md:w-1/3 flex flex-col items-center">
                 <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden border-2 border-cyan-400/30 group">
                   <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
                   <img
-                    src="/avatar.png"
+                    src="/avatar.jpeg"
                     alt="Developer Profile"
                     className="w-full h-full object-cover filter brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-500"
                   />
-                  {/* Decorative corners */}
                   <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400 z-20"></div>
                   <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-cyan-400 z-20"></div>
                   <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-cyan-400 z-20"></div>
@@ -177,7 +167,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Bio Content */}
               <div className="w-full md:w-2/3 space-y-4 font-body text-gray-300 leading-relaxed">
                 <p>
                   I'm a passionate developer who loves crafting immersive digital experiences.
@@ -205,7 +194,6 @@ function App() {
           </div>
         </section>
 
-        {/* Projects Section */}
         <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 py-24 pointer-events-auto">
           <h2 className="font-pixel text-xl text-cyan-400 mb-12 text-center">
             <span className="text-purple-400">02.</span> PROJECTS

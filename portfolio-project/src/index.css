@@ -8,7 +8,6 @@
   src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 }
 
-/* ── Theme tokens via Tailwind v4 ── */
 @theme {
   --font-pixel: 'Press Start 2P', monospace;
   --font-body: 'Inter', system-ui, sans-serif;
@@ -17,7 +16,6 @@
   --color-space-700: #111125;
 }
 
-/* ── Base styles ── */
 html {
   scroll-behavior: smooth;
 }
@@ -32,12 +30,10 @@ body {
   cursor: none;
 }
 
-/* Hide default cursor over the canvas for immersion */
 canvas {
   cursor: none;
 }
 
-/* ── Custom scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -52,7 +48,6 @@ canvas {
   background: rgba(124, 77, 255, 0.5);
 }
 
-/* ── Glassmorphism card ── */
 .glass-card {
   background: rgba(10, 10, 30, 0.6);
   backdrop-filter: blur(16px);
@@ -72,7 +67,6 @@ canvas {
     inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-/* ── Float animation ── */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-12px); }
@@ -81,7 +75,6 @@ canvas {
   animation: float 4s ease-in-out infinite;
 }
 
-/* ── Scanline overlay for retro feel ── */
 #portfolio-content::before {
   content: '';
   position: fixed;
@@ -100,7 +93,6 @@ canvas {
   z-index: 100;
 }
 
-/* ── Selection color ── */
 ::selection {
   background: rgba(124, 77, 255, 0.3);
   color: #ffffff;
