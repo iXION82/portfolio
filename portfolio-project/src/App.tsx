@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SpaceBackground from './components/SpaceBackground';
 import './App.css';
 
@@ -6,11 +6,39 @@ export type ThemeType = 'neon' | 'dark' | 'synthwave';
 export type ShipModelType = 'fighter' | 'saucer' | 'blocky';
 export type WeaponType = 'default' | 'shotgun' | 'sniper';
 
+/* ── Intersection Observer hook for scroll-reveal ── */
+function useScrollReveal() {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    const elements = document.querySelectorAll(
+      '.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale'
+    );
+    elements.forEach((el) => observerRef.current?.observe(el));
+
+    return () => observerRef.current?.disconnect();
+  }, []);
+}
+
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeType>('neon');
   const [shipModel, setShipModel] = useState<ShipModelType>('fighter');
   const [weaponType, setWeaponType] = useState<WeaponType>('default');
+
+  // Activate scroll-reveal observer
+  useScrollReveal();
 
   return (
     <>
@@ -26,6 +54,7 @@ function App() {
             <div className="flex gap-6">
               <a href="#hero" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">HOME</a>
               <a href="#about" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">ABOUT</a>
+              <a href="#skills" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">SKILLS</a>
               <a href="#projects" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">PROJECTS</a>
               <a href="#contact" className="text-xs font-pixel text-gray-400 hover:text-cyan-400 transition-colors duration-300">CONTACT</a>
               <button
@@ -112,8 +141,9 @@ function App() {
           </div>
         )}
 
+        {/* ═══ HERO SECTION ═══ */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 text-center pointer-events-auto">
-          <div className="animate-float">
+          <div className="animate-float scroll-reveal-scale">
             <p className="font-pixel text-xs text-purple-400 tracking-[0.3em] mb-4 uppercase">Welcome to my universe</p>
             <h1 className="font-pixel text-3xl md:text-5xl text-white mb-6 leading-tight">
               <span className="text-cyan-400">SPACE</span> DEVELOPER
@@ -142,14 +172,15 @@ function App() {
           </div>
         </section>
 
+        {/* ═══ ABOUT SECTION ═══ */}
         <section id="about" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
-          <div className="glass-card max-w-4xl w-full p-8 md:p-12">
-            <h2 className="font-pixel text-xl text-cyan-400 mb-8 flex items-center gap-3">
+          <div className="glass-card max-w-4xl w-full p-8 md:p-12 scroll-reveal">
+            <h2 className="font-pixel text-xl text-cyan-400 mb-8 flex items-center gap-3 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
               <span className="text-purple-400">01.</span> ABOUT ME
             </h2>
 
             <div className="flex flex-col md:flex-row gap-10 items-start">
-              <div className="w-full md:w-1/3 flex flex-col items-center">
+              <div className="w-full md:w-1/3 flex flex-col items-center scroll-reveal-left" style={{ transitionDelay: '0.2s' }}>
                 <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden border-2 border-cyan-400/30 group">
                   <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
                   <img
@@ -167,7 +198,7 @@ function App() {
                 </div>
               </div>
 
-              <div className="w-full md:w-2/3 space-y-4 font-body text-gray-300 leading-relaxed">
+              <div className="w-full md:w-2/3 space-y-4 font-body text-gray-300 leading-relaxed scroll-reveal-right" style={{ transitionDelay: '0.3s' }}>
                 <p>
                   I'm a passionate developer who loves crafting immersive digital experiences.
                   With expertise in modern web technologies, I transform ideas into pixel-perfect reality.
@@ -176,26 +207,50 @@ function App() {
                   When I'm not coding, you'll find me exploring new technologies, contributing to open-source
                   projects, or gazing at the stars — because the best code, like the universe, is always expanding.
                 </p>
-                <div className="mt-8 pt-4 border-t border-white/5">
-                  <h3 className="font-pixel text-sm text-purple-400 mb-4">TECH STACK</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {['React', 'TypeScript', 'Node.js', 'Python', 'Three.js', 'Tailwind', 'Next.js', 'PostgreSQL'].map((tech) => (
-                      <span
-                        key={tech}
-                        className="font-pixel text-[10px] px-3 py-1.5 bg-white/5 border border-white/10 rounded text-cyan-300 hover:border-cyan-400/40 hover:bg-cyan-400/10 transition-all duration-300 cursor-default"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
         </section>
 
+        {/* ═══ TECH STACK / SKILLS SECTION ═══ */}
+        <section id="skills" className="flex items-center justify-center px-6 py-24 pointer-events-auto">
+          <div className="max-w-4xl w-full scroll-reveal" style={{ transitionDelay: '0.1s' }}>
+            <h2 className="font-pixel text-xl text-cyan-400 mb-10 text-center scroll-reveal">
+              <span className="text-purple-400">01.5</span> TECH STACK
+            </h2>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { name: 'React', icon: '⚛', color: 'cyan' },
+                { name: 'TypeScript', icon: 'TS', color: 'blue' },
+                { name: 'Node.js', icon: '⬢', color: 'green' },
+                { name: 'Python', icon: '🐍', color: 'yellow' },
+                { name: 'Three.js', icon: '△', color: 'purple' },
+                { name: 'Tailwind', icon: '🌊', color: 'cyan' },
+                { name: 'Next.js', icon: 'N', color: 'white' },
+                { name: 'PostgreSQL', icon: '🐘', color: 'blue' },
+              ].map((tech, index) => (
+                <div
+                  key={tech.name}
+                  className="glass-card p-5 text-center group hover:scale-105 transition-all duration-300 scroll-reveal"
+                  style={{ transitionDelay: `${0.15 + index * 0.08}s` }}
+                >
+                  <div className={`text-2xl mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                    <span className={`text-${tech.color}-400`}>{tech.icon}</span>
+                  </div>
+                  <span className="font-pixel text-[10px] text-gray-300 tracking-wider group-hover:text-white transition-colors duration-300">
+                    {tech.name}
+                  </span>
+                  <div className={`mt-3 h-[2px] w-0 group-hover:w-full bg-${tech.color}-400/50 transition-all duration-500 mx-auto`}></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══ PROJECTS SECTION ═══ */}
         <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 py-24 pointer-events-auto">
-          <h2 className="font-pixel text-xl text-cyan-400 mb-12 text-center">
+          <h2 className="font-pixel text-xl text-cyan-400 mb-12 text-center scroll-reveal">
             <span className="text-purple-400">02.</span> PROJECTS
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
@@ -236,10 +291,11 @@ function App() {
                 tags: ['Go', 'Docker', 'K8s'],
                 color: 'red',
               },
-            ].map((project) => (
+            ].map((project, index) => (
               <div
                 key={project.title}
-                className="glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+                className="glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer scroll-reveal"
+                style={{ transitionDelay: `${index * 0.1}s` }}
               >
                 <div className={`w-10 h-10 rounded bg-${project.color}-500/20 border border-${project.color}-400/30 flex items-center justify-center mb-4 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-300`}>
                   <span className="font-pixel text-xs text-white">⬡</span>
@@ -258,23 +314,24 @@ function App() {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* ═══ CONTACT SECTION ═══ */}
         <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
-          <div className="glass-card max-w-xl w-full p-8 md:p-12 text-center">
-            <h2 className="font-pixel text-xl text-cyan-400 mb-6">
+          <div className="glass-card max-w-xl w-full p-8 md:p-12 text-center scroll-reveal-scale" style={{ transitionDelay: '0.15s' }}>
+            <h2 className="font-pixel text-xl text-cyan-400 mb-6 scroll-reveal" style={{ transitionDelay: '0.25s' }}>
               <span className="text-purple-400">03.</span> CONTACT
             </h2>
-            <p className="font-body text-gray-300 mb-8 leading-relaxed">
+            <p className="font-body text-gray-300 mb-8 leading-relaxed scroll-reveal" style={{ transitionDelay: '0.35s' }}>
               Have a project in mind or just want to say hello?
               My inbox is always open. Let's build something amazing together.
             </p>
             <a
               href="mailto:hello@example.com"
-              className="inline-block font-pixel text-xs px-8 py-4 bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 rounded hover:bg-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] transition-all duration-300"
+              className="inline-block font-pixel text-xs px-8 py-4 bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 rounded hover:bg-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] transition-all duration-300 scroll-reveal"
+              style={{ transitionDelay: '0.45s' }}
             >
               SAY HELLO ✉
             </a>
-            <div className="mt-12 flex justify-center gap-6">
+            <div className="mt-12 flex justify-center gap-6 scroll-reveal" style={{ transitionDelay: '0.55s' }}>
               {[
                 { name: 'GITHUB', url: '#' },
                 { name: 'LINKEDIN', url: '#' },
