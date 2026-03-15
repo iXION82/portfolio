@@ -9,14 +9,12 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    // Simulate loading progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        // Random-ish increments for a natural feel
         const increment = Math.random() * 12 + 3;
         return Math.min(prev + increment, 100);
       });
@@ -27,7 +25,6 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   useEffect(() => {
     if (progress >= 100) {
-      // Brief pause, then fade out
       const timer = setTimeout(() => setFadeOut(true), 600);
       const done = setTimeout(() => onComplete(), 1400);
       return () => {
@@ -44,7 +41,7 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
       }`}
       style={{ background: '#05050f' }}
     >
-      {/* Scanline overlay */}
+      
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -58,7 +55,6 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         }}
       />
 
-      {/* Floating particles (purely decorative) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
           <div
@@ -78,11 +74,10 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         ))}
       </div>
 
-      {/* Loading bar container */}
+
       <div className="relative w-72 md:w-96 mb-8">
-        {/* Track */}
+        
         <div className="h-[3px] w-full rounded-full bg-white/5 overflow-hidden">
-          {/* Fill */}
           <div
             className="h-full rounded-full transition-all duration-200 ease-out"
             style={{
@@ -92,15 +87,12 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
             }}
           />
         </div>
-
-        {/* Percentage */}
         <div className="flex justify-between mt-3">
           <span className="font-pixel text-[10px] text-gray-500 tracking-widest">INITIALIZING</span>
           <span className="font-pixel text-[10px] text-cyan-400">{Math.floor(progress)}%</span>
         </div>
       </div>
 
-      {/* Loading status text */}
       <p className="font-pixel text-[10px] text-gray-600 tracking-wider mb-10 h-4">
         {progress < 25
           ? 'LOADING STAR SYSTEMS...'
@@ -113,7 +105,6 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
           : 'LAUNCH READY'}
       </p>
 
-      {/* Hint */}
       <div
         className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3 transition-opacity duration-500"
         style={{ opacity: progress > 30 ? 1 : 0 }}
@@ -134,7 +125,6 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
         </div>
       </div>
 
-      {/* Inline keyframe for floating particles */}
       <style>{`
         @keyframes loadingFloat {
           0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }

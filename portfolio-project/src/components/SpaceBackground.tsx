@@ -12,7 +12,6 @@ interface SpaceBackgroundProps {
     weaponType: WeaponType;
 }
 
-/* Slowly orbiting low-poly planet */
 function Planet({
     radius,
     color,
@@ -42,11 +41,9 @@ function Planet({
         if (!groupRef.current || !planetRef.current) return;
         const t = state.clock.elapsedTime * orbitSpeed + initialAngle;
 
-        // Move the entire group (planet + ring)
         groupRef.current.position.x = position[0] + Math.cos(t) * orbitRadius;
         groupRef.current.position.y = position[1] + Math.sin(t) * orbitRadius * 0.4;
 
-        // Self-rotation of the planet
         planetRef.current.rotation.y = t * 0.5;
     });
 
@@ -79,7 +76,6 @@ function Planet({
     );
 }
 
-/* Nebula-like background glow plane */
 function NebulaPlane({
     position,
     rotation,
@@ -105,14 +101,12 @@ function NebulaPlane({
     );
 }
 
-/* Scene contents */
 function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
     const shipPositionRef = useRef(new THREE.Vector3(0, 0, 0));
     const shipDirectionRef = useRef(new THREE.Vector3(0, 1, 0));
     const laserStateRef = useRef({ active: false, timestamp: 0 });
     const screenShakeRef = useRef(0);
 
-    // Apply screen shake to camera
     useFrame((state, delta) => {
         if (screenShakeRef.current > 0.01) {
             const magnitude = screenShakeRef.current;
@@ -126,7 +120,6 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
         }
     });
 
-    // --- Theming Logic ---
     const themeColors = useMemo(() => {
         switch (theme) {
             case 'dark':
@@ -174,14 +167,12 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
 
     return (
         <>
-            {/* Ambient + colored lighting */}
             <ambientLight intensity={theme === 'dark' ? 0.3 : 0.15} />
             <directionalLight position={[5, 5, 5]} intensity={0.4} color={themeColors.light1} />
             <pointLight position={[-8, 3, -5]} intensity={1.5} color={themeColors.light2} distance={30} />
             <pointLight position={[6, -4, 3]} intensity={1} color={themeColors.light3} distance={25} />
             <pointLight position={[0, 8, -3]} intensity={0.8} color={themeColors.nebula2} distance={20} />
 
-            {/* Starfield */}
             <Stars
                 radius={80}
                 depth={60}
@@ -192,12 +183,10 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
                 speed={0.5}
             />
 
-            {/* Nebula glow planes */}
             <NebulaPlane position={[-5, 3, -15]} rotation={[0.2, 0.3, 0]} color={themeColors.nebula1} scale={20} />
             <NebulaPlane position={[6, -2, -18]} rotation={[-0.1, -0.2, 0.1]} color={themeColors.nebula2} scale={18} />
             <NebulaPlane position={[0, 0, -20]} rotation={[0, 0, 0]} color={themeColors.nebula3} scale={25} />
 
-            {/* Planets */}
             <Planet
                 radius={2.0}
                 color={themeColors.planet1.c}
@@ -226,7 +215,6 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
                 ringEmissive={themeColors.planet3.re!}
             />
 
-            {/* Interactive elements */}
             <Spaceship
                 shipPositionRef={shipPositionRef}
                 shipDirectionRef={shipDirectionRef}

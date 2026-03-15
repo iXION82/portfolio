@@ -105,31 +105,26 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
         const laserActive = laserStateRef.current.active;
         let needsRerender = false;
 
-        // Laser mathematical bounds setup
         const laserStart = shipPos;
         const laserLines: THREE.Line3[] = [];
 
         if (laserActive) {
             if (weaponType === 'sniper') {
-                // Sniper is buffed to be much longer across the screen
+
                 const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(60));
                 laserLines.push(new THREE.Line3(laserStart, laserEnd));
             } else if (weaponType === 'shotgun') {
-                // Shotgun has shorter range (20% screen size roughly), wider spread
                 const centerEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(3.0));
                 laserLines.push(new THREE.Line3(laserStart, centerEnd));
 
-                // Right angle spread (wider)
                 const rightDir = shipDir.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), -0.6);
                 const rightEnd = shipPos.clone().add(rightDir.multiplyScalar(2.5));
                 laserLines.push(new THREE.Line3(laserStart, rightEnd));
 
-                // Left angle spread (wider)
                 const leftDir = shipDir.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), 0.6);
                 const leftEnd = shipPos.clone().add(leftDir.multiplyScalar(2.5));
                 laserLines.push(new THREE.Line3(laserStart, leftEnd));
             } else {
-                // Default laser
                 const laserEnd = shipPos.clone().add(shipDir.clone().multiplyScalar(7.5));
                 laserLines.push(new THREE.Line3(laserStart, laserEnd));
             }
@@ -137,7 +132,6 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
 
         const closestPoint = new THREE.Vector3();
 
-        // Update respawn timers
         respawnTimers.current.forEach((timer, index) => {
             const newTimer = timer - delta;
             if (newTimer <= 0) {
@@ -152,20 +146,17 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
         meteorites.forEach((m, i) => {
             if (!m.active) return;
 
-            // Move
             m.position.add(m.velocity.clone().multiplyScalar(delta));
             m.rotation.x += m.rotationSpeed.x * delta;
             m.rotation.y += m.rotationSpeed.y * delta;
             m.rotation.z += m.rotationSpeed.z * delta;
 
-            // Update mesh
             const mesh = meshRefs.current[i];
             if (mesh) {
                 mesh.position.copy(m.position);
                 mesh.rotation.copy(m.rotation);
             }
 
-            // Check bounds - respawn if too far
             if (
                 Math.abs(m.position.x) > BOUNDS * 1.5 ||
                 Math.abs(m.position.y) > BOUNDS * 1.5
@@ -177,7 +168,6 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
 
             let hit = false;
 
-            // 1. Collision detection with spaceship (ignore Z depth for hit test)
             const dx = m.position.x - shipPos.x;
             const dy = m.position.y - shipPos.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -186,7 +176,6 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
                 hit = true;
             }
 
-            // 2. Collision detection with laser
             if (!hit && laserActive) {
                 for (const line of laserLines) {
                     line.closestPointToPoint(m.position, true, closestPoint);
@@ -194,7 +183,6 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
                     const ldy = m.position.y - closestPoint.y;
                     const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
 
-                    // Sniper is newly buffed and very thick, default is standard
                     const tolerance = weaponType === 'sniper' ? 1.2 : 0.4;
                     if (ldist < m.scale * 0.5 + tolerance) {
                         hit = true;
@@ -204,7 +192,7 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
             }
 
             if (hit) {
-                // Explode!
+
                 m.active = false;
                 setExplosions((prev) => [
                     ...prev,
@@ -214,7 +202,6 @@ export default function Meteorites({ shipPositionRef, shipDirectionRef, laserSta
                     },
                 ]);
 
-                // Schedule respawn
                 respawnTimers.current.set(i, 1.5 + Math.random() * 2);
                 needsRerender = true;
             }

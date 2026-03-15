@@ -7,7 +7,6 @@ export type ThemeType = 'neon' | 'dark' | 'synthwave';
 export type ShipModelType = 'fighter' | 'saucer' | 'blocky';
 export type WeaponType = 'default' | 'shotgun' | 'sniper';
 
-/* ── Intersection Observer hook for scroll-reveal ── */
 function useScrollReveal() {
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -41,7 +40,6 @@ function App() {
 
   const handleLoadingComplete = useCallback(() => setIsLoading(false), []);
 
-  // Activate scroll-reveal observer
   useScrollReveal();
 
   return (
@@ -66,7 +64,7 @@ function App() {
                 onClick={() => setIsSettingsOpen(true)}
                 className="text-xs font-pixel text-purple-400 hover:text-cyan-400 transition-colors duration-300 ml-4 flex items-center gap-2"
               >
-                ⚙ SETTINGS
+                SETTINGS
               </button>
             </div>
           </div>
@@ -84,9 +82,9 @@ function App() {
               </button>
 
               <div className="flex items-center justify-between mb-6 gap-4 border-b border-white/10 pb-4">
-                  <h2 className="font-pixel text-xl text-cyan-400">
-                    COCKPIT SETTINGS
-                  </h2>
+                <h2 className="font-pixel text-xl text-cyan-400">
+                  COCKPIT SETTINGS
+                </h2>
               </div>
 
               <div className="space-y-8">
@@ -145,19 +143,12 @@ function App() {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2 border-t border-white/5">
-                  <button
-                    onClick={() => setIsSettingsOpen(false)}
-                    className="pointer-events-auto font-pixel text-[10px] px-4 py-2 rounded border border-white/10 text-gray-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
-                  >
-                    CLOSE COCKPIT
-                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ═══ HERO SECTION ═══ */}
         <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-6 text-center pointer-events-auto">
           <div className="animate-float scroll-reveal-scale">
             <p className="font-pixel text-xs text-purple-400 tracking-[0.3em] mb-4 uppercase">Welcome to my universe</p>
@@ -188,23 +179,21 @@ function App() {
           </div>
         </section>
 
-        {/* ═══ ABOUT SECTION ═══ */}
         <section id="about" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="glass-card max-w-4xl w-full p-8 md:p-12 scroll-reveal relative overflow-hidden">
-            {/* Glowing accent border on top */}
+
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60" />
 
-            {/* Section header */}
             <div className="flex items-center gap-4 mb-10 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
               <h2 className="font-pixel text-xl text-cyan-400">ABOUT ME</h2>
               <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
             </div>
 
             <div className="flex flex-col md:flex-row gap-10 items-start">
-              {/* Avatar column */}
+
               <div className="w-full md:w-1/3 flex flex-col items-center scroll-reveal-left" style={{ transitionDelay: '0.2s' }}>
                 <div className="relative">
-                  {/* Pulsing ring behind avatar */}
+
                   <div className="absolute -inset-3 rounded-2xl border border-cyan-400/20 animate-pulse" />
                   <div className="absolute -inset-6 rounded-2xl border border-purple-400/10" />
 
@@ -215,7 +204,6 @@ function App() {
                       alt="Developer Profile"
                       className="w-full h-full object-cover filter brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-500"
                     />
-                    {/* Corner brackets */}
                     <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400 z-20"></div>
                     <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400 z-20"></div>
                     <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400 z-20"></div>
@@ -231,7 +219,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Bio column */}
               <div className="w-full md:w-2/3 scroll-reveal-right" style={{ transitionDelay: '0.3s' }}>
                 <div className="relative pl-5 border-l-2 border-purple-400/20 space-y-5">
                   <p className="font-body text-gray-300 leading-relaxed">
@@ -248,7 +235,6 @@ function App() {
           </div>
         </section>
 
-        {/* ═══ TECH STACK / SKILLS SECTION ═══ */}
         <section id="skills" className="flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="max-w-5xl w-full scroll-reveal" style={{ transitionDelay: '0.1s' }}>
             <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
@@ -302,10 +288,9 @@ function App() {
           </div>
         </section>
 
-        {/* ═══ PROJECTS SECTION ═══ */}
         <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 py-24 pointer-events-auto">
           <h2 className="font-pixel text-xl text-cyan-400 mb-12 text-center scroll-reveal">
-             PROJECTS
+            PROJECTS
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
             {[
@@ -360,7 +345,7 @@ function App() {
                 className="glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer scroll-reveal"
                 style={{ transitionDelay: `${index * 0.1}s` }}
               >
-                
+
                 <h3 className="font-pixel text-sm text-white mb-2">{project.title}</h3>
                 <p className="font-body text-sm text-gray-400 mb-4 leading-relaxed">{project.desc}</p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -391,11 +376,10 @@ function App() {
           </div>
         </section>
 
-        {/* ═══ CONTACT SECTION ═══ */}
         <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="glass-card max-w-xl w-full p-8 md:p-12 text-center scroll-reveal-scale" style={{ transitionDelay: '0.15s' }}>
             <h2 className="font-pixel text-xl text-cyan-400 mb-6 scroll-reveal" style={{ transitionDelay: '0.25s' }}>
-             CONTACT
+              CONTACT
             </h2>
             <p className="font-body text-gray-300 mb-8 leading-relaxed scroll-reveal" style={{ transitionDelay: '0.35s' }}>
               Have a project in mind or just want to say hello?
