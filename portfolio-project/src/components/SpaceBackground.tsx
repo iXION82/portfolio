@@ -12,7 +12,7 @@ interface SpaceBackgroundProps {
     weaponType: WeaponType;
 }
 
-/* Slowly orbiting low-poly planet with atmosphere glow */
+/* Slowly orbiting low-poly planet */
 function Planet({
     radius,
     color,
@@ -23,9 +23,6 @@ function Planet({
     hasRing,
     ringColor,
     ringEmissive,
-    detail = 1,
-    glowColor,
-    glowIntensity = 0.4,
 }: {
     radius: number;
     color: string;
@@ -36,9 +33,6 @@ function Planet({
     hasRing?: boolean;
     ringColor?: string;
     ringEmissive?: string;
-    detail?: number;
-    glowColor?: string;
-    glowIntensity?: number;
 }) {
     const groupRef = useRef<THREE.Group>(null);
     const planetRef = useRef<THREE.Mesh>(null);
@@ -56,53 +50,31 @@ function Planet({
         planetRef.current.rotation.y = t * 0.5;
     });
 
-    const resolvedGlow = glowColor || emissive;
-
     return (
         <group ref={groupRef} position={position}>
-            {/* Planet body */}
             <mesh ref={planetRef}>
-                <icosahedronGeometry args={[radius, detail]} />
+                <icosahedronGeometry args={[radius, 1]} />
                 <meshStandardMaterial
                     color={color}
                     emissive={emissive}
-                    emissiveIntensity={0.4}
+                    emissiveIntensity={0.3}
                     flatShading
-                    roughness={0.6}
-                    metalness={0.15}
+                    roughness={0.7}
                 />
             </mesh>
-
-            {/* Atmosphere glow shell */}
-            <mesh scale={1.15}>
-                <icosahedronGeometry args={[radius, detail]} />
-                <meshBasicMaterial
-                    color={resolvedGlow}
-                    transparent
-                    opacity={glowIntensity}
-                    side={THREE.BackSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
-            </mesh>
-
-            {/* Ring */}
             {hasRing && (
                 <mesh rotation={[1.2, 0.3, 0]}>
-                    <torusGeometry args={[radius * 1.6, 0.18, 8, 32]} />
+                    <torusGeometry args={[4.2, 0.2, 8, 24]} />
                     <meshStandardMaterial
                         color={ringColor}
                         emissive={ringEmissive}
                         emissiveIntensity={0.8}
                         flatShading
                         transparent
-                        opacity={0.85}
+                        opacity={0.8}
                     />
                 </mesh>
             )}
-
-            {/* Point light on each planet for local illumination */}
-            <pointLight color={resolvedGlow} intensity={0.6} distance={radius * 6} />
         </group>
     );
 }
@@ -146,9 +118,8 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
             const magnitude = screenShakeRef.current;
             state.camera.position.x = (Math.random() - 0.5) * magnitude;
             state.camera.position.y = (Math.random() - 0.5) * magnitude;
-            screenShakeRef.current = THREE.MathUtils.lerp(screenShakeRef.current, 0, delta * 5); // decay
+            screenShakeRef.current = THREE.MathUtils.lerp(screenShakeRef.current, 0, delta * 5);
         } else {
-            // Smoothly return to center
             screenShakeRef.current = 0;
             state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, 0, delta * 5);
             state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, 0, delta * 5);
@@ -167,9 +138,9 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
                     nebula1: '#b71c1c',
                     nebula2: '#e65100',
                     nebula3: '#bf360c',
-                    planet1: { c: '#ff5252', e: '#d50000', g: '#ff1744' },
-                    planet2: { c: '#8d6e63', e: '#5d4037', g: '#a1887f' },
-                    planet3: { c: '#ff9100', e: '#ff6d00', rc: '#ffcc80', re: '#e65100', g: '#ff6e40' },
+                    planet1: { c: '#ff5252', e: '#d50000' },
+                    planet2: { c: '#8d6e63', e: '#5d4037' },
+                    planet3: { c: '#ff9100', e: '#ff6d00', rc: '#ffcc80', re: '#e65100' },
                 };
             case 'synthwave':
                 return {
@@ -180,9 +151,9 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
                     nebula1: '#c51162',
                     nebula2: '#00b8d4',
                     nebula3: '#6200ea',
-                    planet1: { c: '#ff4081', e: '#f50057', g: '#ff80ab' },
-                    planet2: { c: '#ffff00', e: '#ffea00', g: '#fff176' },
-                    planet3: { c: '#18ffff', e: '#00e5ff', rc: '#84ffff', re: '#00b8d4', g: '#80deea' },
+                    planet1: { c: '#ff4081', e: '#f50057' },
+                    planet2: { c: '#ffff00', e: '#ffea00' },
+                    planet3: { c: '#18ffff', e: '#00e5ff', rc: '#84ffff', re: '#00b8d4' },
                 };
             case 'neon':
             default:
@@ -194,9 +165,9 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
                     nebula1: '#7c4dff',
                     nebula2: '#e040fb',
                     nebula3: '#00bcd4',
-                    planet1: { c: '#b388ff', e: '#7c4dff', g: '#d1c4e9' },
-                    planet2: { c: '#ffb300', e: '#ff6f00', g: '#ffe082' },
-                    planet3: { c: '#1de9b6', e: '#00bfa5', rc: '#b2dfdb', re: '#004d40', g: '#a7ffeb' },
+                    planet1: { c: '#b388ff', e: '#7c4dff' },
+                    planet2: { c: '#ffb300', e: '#ff6f00' },
+                    planet3: { c: '#1de9b6', e: '#00bfa5', rc: '#b2dfdb', re: '#004d40' },
                 };
         }
     }, [theme]);
@@ -226,39 +197,30 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
             <NebulaPlane position={[6, -2, -18]} rotation={[-0.1, -0.2, 0.1]} color={themeColors.nebula2} scale={18} />
             <NebulaPlane position={[0, 0, -20]} rotation={[0, 0, 0]} color={themeColors.nebula3} scale={25} />
 
-            {/* Planets — original three with enhanced styling */}
+            {/* Planets */}
             <Planet
                 radius={2.0}
                 color={themeColors.planet1.c}
                 emissive={themeColors.planet1.e}
-                glowColor={themeColors.planet1.g}
-                glowIntensity={0.3}
                 position={[-7, 5, -12]}
                 orbitSpeed={0.08}
                 orbitRadius={1.5}
-                detail={2}
             />
             <Planet
                 radius={1.6}
                 color={themeColors.planet2.c}
                 emissive={themeColors.planet2.e}
-                glowColor={themeColors.planet2.g}
-                glowIntensity={0.25}
                 position={[8, -4, -14]}
                 orbitSpeed={0.12}
                 orbitRadius={1.2}
-                detail={2}
             />
             <Planet
                 radius={2.8}
                 color={themeColors.planet3.c}
                 emissive={themeColors.planet3.e}
-                glowColor={themeColors.planet3.g}
-                glowIntensity={0.35}
                 position={[4, 7, -18]}
                 orbitSpeed={0.05}
                 orbitRadius={2.5}
-                detail={2}
                 hasRing={true}
                 ringColor={themeColors.planet3.rc!}
                 ringEmissive={themeColors.planet3.re!}
@@ -293,7 +255,7 @@ export default function SpaceBackground({ theme, shipModel, weaponType }: SpaceB
                 eventPrefix="client"
                 camera={{ position: [0, 0, 8], fov: 60 }}
                 gl={{
-                    antialias: false, // pixelated feel
+                    antialias: false,
                     alpha: false,
                     powerPreference: 'high-performance',
                 }}

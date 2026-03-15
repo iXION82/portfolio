@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import SpaceBackground from './components/SpaceBackground';
+import LoadingScreen from './components/LoadingScreen';
 import './App.css';
 
 export type ThemeType = 'neon' | 'dark' | 'synthwave';
@@ -36,12 +37,16 @@ function App() {
   const [theme, setTheme] = useState<ThemeType>('neon');
   const [shipModel, setShipModel] = useState<ShipModelType>('fighter');
   const [weaponType, setWeaponType] = useState<WeaponType>('default');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleLoadingComplete = useCallback(() => setIsLoading(false), []);
 
   // Activate scroll-reveal observer
   useScrollReveal();
 
   return (
     <>
+      {isLoading && <LoadingScreen onComplete={handleLoadingComplete} />}
       <SpaceBackground theme={theme} shipModel={shipModel} weaponType={weaponType} />
 
       <div className="relative z-10 min-h-screen overflow-y-auto pointer-events-none" id="portfolio-content">
@@ -69,8 +74,8 @@ function App() {
 
         {isSettingsOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto cursor-auto">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)}></div>
-            <div className="relative glass-card w-full max-w-2xl p-8 border border-cyan-400/30 animate-scale-in">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)}></div>
+            <div className="relative glass-card w-full max-w-2xl p-8 md:p-10 border border-cyan-400/40 animate-scale-in shadow-[0_0_40px_rgba(34,211,238,0.25)]">
               <button
                 onClick={() => setIsSettingsOpen(false)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white font-pixel text-xl"
@@ -78,14 +83,24 @@ function App() {
                 ×
               </button>
 
-              <h2 className="font-pixel text-xl text-cyan-400 mb-8 border-b border-white/10 pb-4">
-                SYSTEM SETTINGS
-              </h2>
+              <div className="flex items-center justify-between mb-6 gap-4 border-b border-white/10 pb-4">
+                <div>
+                  <h2 className="font-pixel text-xl text-cyan-400">
+                    COCKPIT SETTINGS
+                  </h2>
+                  <p className="font-body text-[11px] text-gray-400 mt-2 max-w-xs">
+                    Tune the visual system of your portfolio starship in real-time.
+                  </p>
+                </div>
+                <span className="hidden md:inline-flex font-pixel text-[9px] px-3 py-1 rounded-full border border-cyan-400/40 text-cyan-300 bg-cyan-500/10 tracking-[0.15em]">
+                  LIVE PREVIEW
+                </span>
+              </div>
 
               <div className="space-y-8">
-                <div>
+                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">COLOR THEME</h3>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-3">
                     {(['neon', 'dark', 'synthwave'] as ThemeType[]).map((t) => (
                       <button
                         key={t}
@@ -101,9 +116,9 @@ function App() {
                   </div>
                 </div>
 
-                <div>
+                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">SHIP CHASSIS</h3>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-3">
                     {(['fighter', 'saucer', 'blocky'] as ShipModelType[]).map((s) => (
                       <button
                         key={s}
@@ -119,9 +134,9 @@ function App() {
                   </div>
                 </div>
 
-                <div>
+                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
                   <h3 className="font-pixel text-sm text-gray-300 mb-4">WEAPON SYSTEM</h3>
-                  <div className="flex gap-4">
+                  <div className="flex flex-wrap gap-3">
                     {(['default', 'shotgun', 'sniper'] as WeaponType[]).map((w) => (
                       <button
                         key={w}
@@ -135,6 +150,19 @@ function App() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2 border-t border-white/5">
+                  <p className="font-body text-[11px] text-gray-500 max-w-xs">
+                    Pro tip: combine <span className="text-cyan-400">Synthwave</span> with the{' '}
+                    <span className="text-purple-400">Saucer</span> chassis for maximum retro vibes.
+                  </p>
+                  <button
+                    onClick={() => setIsSettingsOpen(false)}
+                    className="pointer-events-auto font-pixel text-[10px] px-4 py-2 rounded border border-white/10 text-gray-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
+                  >
+                    CLOSE COCKPIT
+                  </button>
                 </div>
               </div>
             </div>
@@ -174,39 +202,61 @@ function App() {
 
         {/* ═══ ABOUT SECTION ═══ */}
         <section id="about" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
-          <div className="glass-card max-w-4xl w-full p-8 md:p-12 scroll-reveal">
-            <h2 className="font-pixel text-xl text-cyan-400 mb-8 flex items-center gap-3 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
-              <span className="text-purple-400">01.</span> ABOUT ME
-            </h2>
+          <div className="glass-card max-w-4xl w-full p-8 md:p-12 scroll-reveal relative overflow-hidden">
+            {/* Glowing accent border on top */}
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60" />
+
+            {/* Section header */}
+            <div className="flex items-center gap-4 mb-10 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/15 border border-purple-400/30">
+              </div>
+              <h2 className="font-pixel text-xl text-cyan-400">ABOUT ME</h2>
+              <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+            </div>
 
             <div className="flex flex-col md:flex-row gap-10 items-start">
+              {/* Avatar column */}
               <div className="w-full md:w-1/3 flex flex-col items-center scroll-reveal-left" style={{ transitionDelay: '0.2s' }}>
-                <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden border-2 border-cyan-400/30 group">
-                  <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
-                  <img
-                    src="/avatar.jpeg"
-                    alt="Developer Profile"
-                    className="w-full h-full object-cover filter brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-500"
-                  />
-                  <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400 z-20"></div>
-                  <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-cyan-400 z-20"></div>
-                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-cyan-400 z-20"></div>
-                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400 z-20"></div>
+                <div className="relative">
+                  {/* Pulsing ring behind avatar */}
+                  <div className="absolute -inset-3 rounded-2xl border border-cyan-400/20 animate-pulse" />
+                  <div className="absolute -inset-6 rounded-2xl border border-purple-400/10" />
+
+                  <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-xl overflow-hidden border-2 border-cyan-400/30 group">
+                    <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                    <img
+                      src="/avatar.jpeg"
+                      alt="Developer Profile"
+                      className="w-full h-full object-cover filter brightness-90 group-hover:brightness-110 group-hover:scale-105 transition-all duration-500"
+                    />
+                    {/* Corner brackets */}
+                    <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400 z-20"></div>
+                    <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400 z-20"></div>
+                    <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400 z-20"></div>
+                    <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400 z-20"></div>
+                  </div>
                 </div>
-                <div className="mt-4 font-pixel text-[10px] text-cyan-400/60 tracking-widest uppercase">
-                  STATUS: ONLINE
+
+                <div className="mt-5 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.6)]" />
+                  <span className="font-pixel text-[10px] text-green-400/80 tracking-widest uppercase">
+                    OPEN TO WORK
+                  </span>
                 </div>
               </div>
 
-              <div className="w-full md:w-2/3 space-y-4 font-body text-gray-300 leading-relaxed scroll-reveal-right" style={{ transitionDelay: '0.3s' }}>
-                <p>
-                  I'm a passionate developer who loves crafting immersive digital experiences.
-                  With expertise in modern web technologies, I transform ideas into pixel-perfect reality.
-                </p>
-                <p>
-                  When I'm not coding, you'll find me exploring new technologies, contributing to open-source
-                  projects, or gazing at the stars — because the best code, like the universe, is always expanding.
-                </p>
+              {/* Bio column */}
+              <div className="w-full md:w-2/3 scroll-reveal-right" style={{ transitionDelay: '0.3s' }}>
+                <div className="relative pl-5 border-l-2 border-purple-400/20 space-y-5">
+                  <p className="font-body text-gray-300 leading-relaxed">
+                    I'm a passionate developer who loves crafting immersive digital experiences.
+                    With expertise in modern web technologies, I transform ideas into <span className="text-cyan-400">pixel-perfect reality</span>.
+                  </p>
+                  <p className="font-body text-gray-300 leading-relaxed">
+                    When I'm not coding, you'll find me exploring new technologies, contributing to open-source
+                    projects, or gazing at the stars — because the best code, like the universe, is <span className="text-purple-400">always expanding</span>.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -214,36 +264,58 @@ function App() {
 
         {/* ═══ TECH STACK / SKILLS SECTION ═══ */}
         <section id="skills" className="flex items-center justify-center px-6 py-24 pointer-events-auto">
-          <div className="max-w-4xl w-full scroll-reveal" style={{ transitionDelay: '0.1s' }}>
-            <h2 className="font-pixel text-xl text-cyan-400 mb-10 text-center scroll-reveal">
-              <span className="text-purple-400">01.5</span> TECH STACK
-            </h2>
+          <div className="max-w-5xl w-full scroll-reveal" style={{ transitionDelay: '0.1s' }}>
+            <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
+              <h2 className="font-pixel text-xl text-cyan-400">
+                TECH STACK
+              </h2>
+              <p className="font-body text-xs md:text-sm text-gray-400 max-w-md">
+                Tools and technologies I use to build <span className="text-cyan-400">fast</span>,{' '}
+                <span className="text-purple-400">reliable</span> and <span className="text-pink-400">beautiful</span> products.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { name: 'React', icon: '⚛', color: 'cyan' },
-                { name: 'TypeScript', icon: 'TS', color: 'blue' },
-                { name: 'Node.js', icon: '⬢', color: 'green' },
-                { name: 'Python', icon: '🐍', color: 'yellow' },
-                { name: 'Three.js', icon: '△', color: 'purple' },
-                { name: 'Tailwind', icon: '🌊', color: 'cyan' },
-                { name: 'Next.js', icon: 'N', color: 'white' },
-                { name: 'PostgreSQL', icon: '🐘', color: 'blue' },
-              ].map((tech, index) => (
-                <div
-                  key={tech.name}
-                  className="glass-card p-5 text-center group hover:scale-105 transition-all duration-300 scroll-reveal"
-                  style={{ transitionDelay: `${0.15 + index * 0.08}s` }}
-                >
-                  <div className={`text-2xl mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                    <span className={`text-${tech.color}-400`}>{tech.icon}</span>
+            <div className="glass-card p-6 md:p-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+                {[
+                  { name: 'React', icon: '⚛', color: 'cyan', level: 'Frontend' },
+                  { name: 'TypeScript', icon: 'TS', color: 'blue', level: 'Typed JS' },
+                  { name: 'Next.js', icon: 'N', color: 'slate', level: 'Fullstack' },
+                  { name: 'Tailwind', icon: '🌊', color: 'cyan', level: 'Styling' },
+                  { name: 'Node.js', icon: '⬢', color: 'green', level: 'Backend' },
+                  { name: 'Express', icon: '⇄', color: 'emerald', level: 'APIs' },
+                  { name: 'PostgreSQL', icon: '🐘', color: 'indigo', level: 'Database' },
+                  { name: 'MongoDB', icon: '🍃', color: 'green', level: 'NoSQL' },
+                  { name: 'Three.js', icon: '△', color: 'purple', level: '3D / WebGL' },
+                  { name: 'Python', icon: '🐍', color: 'yellow', level: 'Scripting' },
+                  { name: 'Docker', icon: '🐳', color: 'sky', level: 'DevOps' },
+                  { name: 'Git / GitHub', icon: '</>', color: 'orange', level: 'Versioning' },
+                ].map((tech, index) => (
+                  <div
+                    key={tech.name}
+                    className="relative overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] px-4 py-4 group scroll-reveal"
+                    style={{ transitionDelay: `${0.15 + index * 0.06}s` }}
+                  >
+                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-${tech.color}-500/10 via-transparent to-${tech.color}-400/10`} />
+                    <div className="relative flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <div className={`text-lg md:text-xl`}>
+                          <span className={`text-${tech.color}-400`}>{tech.icon}</span>
+                        </div>
+                        <span className="font-pixel text-[9px] text-gray-500 uppercase tracking-wider">
+                          {tech.level}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-pixel text-[10px] text-gray-200 tracking-wider">
+                          {tech.name}
+                        </span>
+                        <span className={`h-[2px] w-6 rounded-full bg-${tech.color}-400/70 group-hover:w-10 transition-all duration-300`} />
+                      </div>
+                    </div>
                   </div>
-                  <span className="font-pixel text-[10px] text-gray-300 tracking-wider group-hover:text-white transition-colors duration-300">
-                    {tech.name}
-                  </span>
-                  <div className={`mt-3 h-[2px] w-0 group-hover:w-full bg-${tech.color}-400/50 transition-all duration-500 mx-auto`}></div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -251,7 +323,7 @@ function App() {
         {/* ═══ PROJECTS SECTION ═══ */}
         <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 py-24 pointer-events-auto">
           <h2 className="font-pixel text-xl text-cyan-400 mb-12 text-center scroll-reveal">
-            <span className="text-purple-400">02.</span> PROJECTS
+             PROJECTS
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full">
             {[
@@ -260,36 +332,45 @@ function App() {
                 desc: 'A high-performance rendering engine built with WebGL and Three.js for interactive 3D web experiences.',
                 tags: ['Three.js', 'WebGL', 'TypeScript'],
                 color: 'cyan',
+                github: '#',
+                demo: '#',
               },
               {
                 title: 'STARMAP API',
                 desc: 'RESTful API service for astronomical data with real-time celestial object tracking and visualization.',
                 tags: ['Node.js', 'Express', 'MongoDB'],
                 color: 'purple',
+                github: '#',
+                demo: '#',
               },
               {
                 title: 'COSMOS CHAT',
                 desc: 'Real-time messaging platform with end-to-end encryption, themed around interstellar communication.',
                 tags: ['React', 'Socket.io', 'Redis'],
                 color: 'pink',
+                github: '#',
               },
               {
                 title: 'ORBIT TRACKER',
                 desc: 'Dashboard for tracking satellite orbits with predictive trajectory calculations and live feeds.',
                 tags: ['Python', 'D3.js', 'FastAPI'],
                 color: 'amber',
+                github: '#',
               },
               {
                 title: 'PIXEL FORGE',
                 desc: 'Browser-based pixel art editor with layers, animation support, and collaborative editing features.',
                 tags: ['Canvas API', 'React', 'WebRTC'],
                 color: 'green',
+                github: '#',
+                demo: '#',
               },
               {
                 title: 'WARP DRIVE',
                 desc: 'CI/CD pipeline tool with visual workflow builder and automated deployment to multiple cloud providers.',
                 tags: ['Go', 'Docker', 'K8s'],
                 color: 'red',
+                github: '#',
               },
             ].map((project, index) => (
               <div
@@ -302,12 +383,28 @@ function App() {
                 </div>
                 <h3 className="font-pixel text-sm text-white mb-2">{project.title}</h3>
                 <p className="font-body text-sm text-gray-400 mb-4 leading-relaxed">{project.desc}</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1.5 mb-4">
                   {project.tags.map((tag) => (
                     <span key={tag} className="font-pixel text-[8px] px-2 py-1 text-gray-500 bg-white/5 rounded">
                       {tag}
                     </span>
                   ))}
+                </div>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={project.github}
+                    className="font-pixel text-[9px] px-3 py-1.5 rounded border border-white/10 text-gray-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
+                  >
+                    GITHUB
+                  </a>
+                  {project.demo && (
+                    <a
+                      href={project.demo}
+                      className="font-pixel text-[9px] px-3 py-1.5 rounded border border-purple-400/50 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 hover:shadow-[0_0_18px_rgba(168,85,247,0.35)] transition-all duration-300"
+                    >
+                      LIVE DEMO
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -318,7 +415,7 @@ function App() {
         <section id="contact" className="min-h-screen flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="glass-card max-w-xl w-full p-8 md:p-12 text-center scroll-reveal-scale" style={{ transitionDelay: '0.15s' }}>
             <h2 className="font-pixel text-xl text-cyan-400 mb-6 scroll-reveal" style={{ transitionDelay: '0.25s' }}>
-              <span className="text-purple-400">03.</span> CONTACT
+             CONTACT
             </h2>
             <p className="font-body text-gray-300 mb-8 leading-relaxed scroll-reveal" style={{ transitionDelay: '0.35s' }}>
               Have a project in mind or just want to say hello?
