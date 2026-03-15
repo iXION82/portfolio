@@ -84,17 +84,9 @@ function App() {
               </button>
 
               <div className="flex items-center justify-between mb-6 gap-4 border-b border-white/10 pb-4">
-                <div>
                   <h2 className="font-pixel text-xl text-cyan-400">
                     COCKPIT SETTINGS
                   </h2>
-                  <p className="font-body text-[11px] text-gray-400 mt-2 max-w-xs">
-                    Tune the visual system of your portfolio starship in real-time.
-                  </p>
-                </div>
-                <span className="hidden md:inline-flex font-pixel text-[9px] px-3 py-1 rounded-full border border-cyan-400/40 text-cyan-300 bg-cyan-500/10 tracking-[0.15em]">
-                  LIVE PREVIEW
-                </span>
               </div>
 
               <div className="space-y-8">
@@ -153,10 +145,6 @@ function App() {
                 </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2 border-t border-white/5">
-                  <p className="font-body text-[11px] text-gray-500 max-w-xs">
-                    Pro tip: combine <span className="text-cyan-400">Synthwave</span> with the{' '}
-                    <span className="text-purple-400">Saucer</span> chassis for maximum retro vibes.
-                  </p>
                   <button
                     onClick={() => setIsSettingsOpen(false)}
                     className="pointer-events-auto font-pixel text-[10px] px-4 py-2 rounded border border-white/10 text-gray-300 hover:border-cyan-400/60 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all duration-300"
@@ -208,8 +196,6 @@ function App() {
 
             {/* Section header */}
             <div className="flex items-center gap-4 mb-10 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/15 border border-purple-400/30">
-              </div>
               <h2 className="font-pixel text-xl text-cyan-400">ABOUT ME</h2>
               <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
             </div>
@@ -269,10 +255,6 @@ function App() {
               <h2 className="font-pixel text-xl text-cyan-400">
                 TECH STACK
               </h2>
-              <p className="font-body text-xs md:text-sm text-gray-400 max-w-md">
-                Tools and technologies I use to build <span className="text-cyan-400">fast</span>,{' '}
-                <span className="text-purple-400">reliable</span> and <span className="text-pink-400">beautiful</span> products.
-              </p>
             </div>
 
             <div className="glass-card p-6 md:p-8">
@@ -378,9 +360,7 @@ function App() {
                 className="glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer scroll-reveal"
                 style={{ transitionDelay: `${index * 0.1}s` }}
               >
-                <div className={`w-10 h-10 rounded bg-${project.color}-500/20 border border-${project.color}-400/30 flex items-center justify-center mb-4 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-300`}>
-                  <span className="font-pixel text-xs text-white">⬡</span>
-                </div>
+                
                 <h3 className="font-pixel text-sm text-white mb-2">{project.title}</h3>
                 <p className="font-body text-sm text-gray-400 mb-4 leading-relaxed">{project.desc}</p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
@@ -426,13 +406,12 @@ function App() {
               className="inline-block font-pixel text-xs px-8 py-4 bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 rounded hover:bg-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] transition-all duration-300 scroll-reveal"
               style={{ transitionDelay: '0.45s' }}
             >
-              SAY HELLO ✉
+              SAY HELLO
             </a>
             <div className="mt-12 flex justify-center gap-6 scroll-reveal" style={{ transitionDelay: '0.55s' }}>
               {[
-                { name: 'GITHUB', url: '#' },
-                { name: 'LINKEDIN', url: '#' },
-                { name: 'TWITTER', url: '#' },
+                { name: 'GITHUB', url: 'https://github.com/iXION82' },
+                { name: 'LINKEDIN', url: 'https://www.linkedin.com/in/ayushman-singh-chauhan-6a52b8320/' },
               ].map((link) => (
                 <a
                   key={link.name}
@@ -445,11 +424,9 @@ function App() {
             </div>
           </div>
         </section>
-
-        {/* Footer */}
         <footer className="py-8 text-center border-t border-white/5">
           <p className="font-pixel text-[10px] text-gray-600">
-            DESIGNED & BUILT WITH ♥ AND PIXELS
+            {/* DESIGNED & BUILT WITH ♥ AND PIXELS */}
           </p>
         </footer>
 
