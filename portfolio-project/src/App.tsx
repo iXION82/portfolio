@@ -223,11 +223,13 @@ function App() {
                 <div className="relative pl-5 border-l-2 border-purple-400/20 space-y-5">
                   <p className="font-body text-gray-300 leading-relaxed">
                     I'm a passionate developer who loves crafting immersive digital experiences.
-                    With expertise in modern web technologies, I transform ideas into <span className="text-cyan-400">pixel-perfect reality</span>.
+                    Using modern web technologies, I enjoy transforming ideas into
+                    <span className="text-cyan-400"> pixel-perfect reality</span> while building fast and interactive applications.
                   </p>
+
                   <p className="font-body text-gray-300 leading-relaxed">
-                    When I'm not coding, you'll find me exploring new technologies, contributing to open-source
-                    projects, or gazing at the stars — because the best code, like the universe, is <span className="text-purple-400">always expanding</span>.
+                    When I'm not coding, I enjoy experimenting with new frameworks and practicing
+                    <span className="text-purple-400"> competitive programming</span>, solving challenging algorithmic problems that sharpen my problem-solving skills and push me to think more efficiently about code and algorithms.
                   </p>
                 </div>
               </div>
