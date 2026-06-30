@@ -202,8 +202,8 @@ function App() {
                 CONTACT ME
               </a>
               <a
-                href="#"
-                download="Resume.pdf"
+                href="/Resume (2).pdf"
+                download="Ayushman_Singh_Chauhan_Resume.pdf"
                 className="font-pixel text-xs px-6 py-3 bg-green-500/20 border border-green-400/40 text-green-400 rounded hover:bg-green-500/30 hover:shadow-[0_0_20px_rgba(74,222,128,0.3)] transition-all duration-300"
               >
                 DOWNLOAD RESUME
