@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import SpaceBackground from './components/SpaceBackground';
 import LoadingScreen from './components/LoadingScreen';
+import { SiCplusplus, SiTypescript, SiPython, SiReact, SiNextdotjs, SiNodedotjs, SiSocketdotio, SiMongodb, SiPostgresql, SiTailwindcss, SiScikitlearn, SiDocker } from 'react-icons/si';
 import './App.css';
 
 export type ThemeType = 'neon' | 'dark' | 'synthwave';
@@ -257,6 +258,7 @@ function App() {
               <div className="w-full md:w-2/3 scroll-reveal-right" style={{ transitionDelay: '0.3s' }}>
                 <div className="relative pl-5 border-l-2 border-purple-400/20 space-y-5">
                   <p className="font-body text-gray-300 leading-relaxed">
+                    Hi, I am <span className="text-cyan-400 font-bold tracking-wide">Ayushman Singh Chauhan</span>, a 3rd year student at <span className="text-white">IIT (ISM) Dhanbad</span>.
                     I'm a passionate developer who loves crafting immersive digital experiences.
                     Using modern web technologies, I enjoy transforming ideas into
                     <span className="text-cyan-400"> pixel-perfect reality</span> while building fast and interactive applications.
@@ -274,53 +276,74 @@ function App() {
 
         <section id="skills" className="flex items-center justify-center px-6 py-24 pointer-events-auto">
           <div className="max-w-5xl w-full scroll-reveal" style={{ transitionDelay: '0.1s' }}>
-            <div className="flex items-center justify-between mb-10 gap-4 flex-wrap">
-              <h2 className="font-pixel text-xl text-cyan-400">
-                TECH STACK
-              </h2>
+            {/* Section header matching About Me style */}
+            <div className="flex items-center gap-4 mb-10 scroll-reveal-left" style={{ transitionDelay: '0.1s' }}>
+              <h2 className="font-pixel text-xl text-cyan-400">TECH STACK</h2>
+              <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
             </div>
 
-            <div className="glass-card p-6 md:p-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
-                {[
-                  { name: 'React', icon: '⚛', color: 'cyan', level: 'Frontend' },
-                  { name: 'TypeScript', icon: 'TS', color: 'blue', level: 'Typed JS' },
-                  { name: 'Next.js', icon: 'N', color: 'slate', level: 'Fullstack' },
-                  { name: 'Tailwind', icon: '🌊', color: 'cyan', level: 'Styling' },
-                  { name: 'Node.js', icon: '⬢', color: 'green', level: 'Backend' },
-                  { name: 'Express', icon: '⇄', color: 'emerald', level: 'APIs' },
-                  { name: 'PostgreSQL', icon: '🐘', color: 'indigo', level: 'Database' },
-                  { name: 'MongoDB', icon: '🍃', color: 'green', level: 'NoSQL' },
-                  { name: 'Three.js', icon: '△', color: 'purple', level: '3D / WebGL' },
-                  { name: 'Python', icon: '🐍', color: 'yellow', level: 'Scripting' },
-                  { name: 'Docker', icon: '🐳', color: 'sky', level: 'DevOps' },
-                  { name: 'Git / GitHub', icon: '</>', color: 'orange', level: 'Versioning' },
-                ].map((tech, index) => (
-                  <div
-                    key={tech.name}
-                    className="relative overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] px-4 py-4 group scroll-reveal"
-                    style={{ transitionDelay: `${0.15 + index * 0.06}s` }}
-                  >
-                    <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-${tech.color}-500/10 via-transparent to-${tech.color}-400/10`} />
-                    <div className="relative flex flex-col gap-2">
-                      <div className="flex items-center justify-between">
-                        <div className={`text-lg md:text-xl`}>
-                          <span className={`text-${tech.color}-400`}>{tech.icon}</span>
-                        </div>
-                        <span className="font-pixel text-[9px] text-gray-500 uppercase tracking-wider">
-                          {tech.level}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-pixel text-[10px] text-gray-200 tracking-wider">
-                          {tech.name}
-                        </span>
-                        <span className={`h-[2px] w-6 rounded-full bg-${tech.color}-400/70 group-hover:w-10 transition-all duration-300`} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
+              {[
+                { name: 'C / C++', icon: <SiCplusplus />, hex: '#60a5fa', level: 'Systems & CP' },
+                { name: 'TypeScript', icon: <SiTypescript />, hex: '#3b82f6', level: 'Language' },
+                { name: 'Python', icon: <SiPython />, hex: '#facc15', level: 'Data & Scripting' },
+                { name: 'React.js', icon: <SiReact />, hex: '#22d3ee', level: 'Frontend UI' },
+                { name: 'Next.js', icon: <SiNextdotjs />, hex: '#94a3b8', level: 'Fullstack' },
+                { name: 'Node & Express', icon: <SiNodedotjs />, hex: '#4ade80', level: 'Backend API' },
+                { name: 'Socket.IO', icon: <SiSocketdotio />, hex: '#818cf8', level: 'Real-time' },
+                { name: 'MongoDB', icon: <SiMongodb />, hex: '#22c55e', level: 'NoSQL DB' },
+                { name: 'SQL Databases', icon: <SiPostgresql />, hex: '#fb923c', level: 'Relational DB' },
+                { name: 'Tailwind CSS', icon: <SiTailwindcss />, hex: '#22d3ee', level: 'Styling' },
+                { name: 'Machine Learning', icon: <SiScikitlearn />, hex: '#c084fc', level: 'Scikit / Pandas' },
+                { name: 'Docker & Git', icon: <SiDocker />, hex: '#38bdf8', level: 'DevOps & Tools' },
+              ].map((tech, index) => (
+                <div
+                  key={tech.name}
+                  className="relative overflow-hidden rounded-xl bg-white/[0.02] backdrop-blur-sm group scroll-reveal cursor-default"
+                  style={{
+                    transitionDelay: `${0.15 + index * 0.06}s`,
+                    border: `1px solid ${tech.hex}15`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = `${tech.hex}40`;
+                    e.currentTarget.style.boxShadow = `0 0 25px ${tech.hex}15, inset 0 0 30px ${tech.hex}08`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = `${tech.hex}15`;
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {/* Colored top accent bar */}
+                  <div className="h-[2px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${tech.hex}60, transparent)` }} />
+
+                  <div className="px-4 py-5 flex flex-col items-center text-center gap-3">
+                    {/* Icon with glow circle */}
+                    <div className="relative">
+                      <div
+                        className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500"
+                        style={{ background: tech.hex }}
+                      />
+                      <div
+                        className="relative flex items-center justify-center w-12 h-12 rounded-full transition-transform duration-300 group-hover:scale-110"
+                        style={{ background: `${tech.hex}12`, border: `1px solid ${tech.hex}25` }}
+                      >
+                        <span className="text-xl" style={{ color: tech.hex }}>{tech.icon}</span>
                       </div>
                     </div>
+
+                    {/* Name */}
+                    <span className="font-pixel text-[10px] text-gray-200 tracking-wider">{tech.name}</span>
+
+                    {/* Level badge */}
+                    <span
+                      className="font-pixel text-[7px] tracking-[0.15em] uppercase px-2.5 py-1 rounded-full"
+                      style={{ color: `${tech.hex}cc`, background: `${tech.hex}10`, border: `1px solid ${tech.hex}20` }}
+                    >
+                      {tech.level}
+                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -431,7 +454,7 @@ function App() {
               My inbox is always open. Let's build something amazing together.
             </p>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:895731a1@gmail.com"
               className="inline-block font-pixel text-xs px-8 py-4 bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 rounded hover:bg-cyan-500/30 hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] transition-all duration-300 scroll-reveal"
               style={{ transitionDelay: '0.45s' }}
             >
