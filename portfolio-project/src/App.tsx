@@ -71,78 +71,106 @@ function App() {
         </nav>
 
         {isSettingsOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto cursor-auto">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)}></div>
-            <div className="relative glass-card w-full max-w-2xl p-8 md:p-10 border border-cyan-400/40 animate-scale-in shadow-[0_0_40px_rgba(34,211,238,0.25)]">
-              <button
-                onClick={() => setIsSettingsOpen(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white font-pixel text-xl"
-              >
-                ×
-              </button>
-
-              <div className="flex items-center justify-between mb-6 gap-4 border-b border-white/10 pb-4">
-                <h2 className="font-pixel text-xl text-cyan-400">
-                  COCKPIT SETTINGS
-                </h2>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-auto cursor-auto px-4">
+            {/* Darker backdrop with blur */}
+            <div className="absolute inset-0 bg-[#05050f]/80 backdrop-blur-md transition-opacity duration-500" onClick={() => setIsSettingsOpen(false)}></div>
+            
+            {/* Graceful Modal Container */}
+            <div className="relative w-full max-w-2xl p-8 md:p-12 animate-scale-in">
+              {/* Gradient border effect using pseudo-elements / wrapping div */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-cyan-500/20 via-purple-500/10 to-transparent p-[1px]">
+                <div className="absolute inset-0 rounded-2xl bg-[#0a0a14]/95 backdrop-blur-2xl h-full w-full"></div>
               </div>
 
-              <div className="space-y-8">
-                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                  <h3 className="font-pixel text-sm text-gray-300 mb-4">COLOR THEME</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(['neon', 'dark', 'synthwave'] as ThemeType[]).map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => setTheme(t)}
-                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${theme === t
-                          ? 'bg-cyan-500/30 border border-cyan-400 text-white shadow-[0_0_15px_rgba(34,211,238,0.4)]'
-                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
-                          }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
+              {/* Content wrapper */}
+              <div className="relative z-10">
+                <button
+                  onClick={() => setIsSettingsOpen(false)}
+                  className="absolute -top-4 -right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-pixel text-xl transition-all duration-300 hover:rotate-90 hover:scale-110 shadow-lg"
+                >
+                  ×
+                </button>
+
+                <div className="flex flex-col items-center text-center mb-10">
+                  <div className="w-12 h-1 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full mb-6"></div>
+                  <h2 className="font-pixel text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 tracking-wider">
+                    SYSTEM PREFERENCES
+                  </h2>
+                  <p className="font-body text-sm text-gray-400 mt-3">Customize your interactive universe</p>
                 </div>
 
-                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                  <h3 className="font-pixel text-sm text-gray-300 mb-4">SHIP CHASSIS</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(['fighter', 'saucer', 'blocky'] as ShipModelType[]).map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setShipModel(s)}
-                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${shipModel === s
-                          ? 'bg-purple-500/30 border border-purple-400 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]'
-                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
-                          }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                <div className="space-y-8">
+                  {/* Theme Section */}
+                  <div className="relative group">
+                    <h3 className="font-pixel text-[10px] text-cyan-400/80 mb-4 tracking-[0.2em] flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-cyan-400/50"></span> COLOR PROTOCOL
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {(['neon', 'dark', 'synthwave'] as ThemeType[]).map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => setTheme(t)}
+                          className={`relative overflow-hidden font-pixel text-[9px] px-6 py-3 rounded-lg uppercase tracking-widest transition-all duration-500 ${theme === t
+                            ? 'text-cyan-100 shadow-[0_0_20px_rgba(34,211,238,0.2)]'
+                            : 'text-gray-500 hover:text-gray-300 bg-white/[0.02] hover:bg-white/[0.05]'
+                            }`}
+                        >
+                          {theme === t && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/50 rounded-lg"></div>
+                          )}
+                          <span className="relative z-10">{t}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-lg border border-white/5 bg-white/[0.02] p-4">
-                  <h3 className="font-pixel text-sm text-gray-300 mb-4">WEAPON SYSTEM</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(['default', 'shotgun', 'sniper'] as WeaponType[]).map((w) => (
-                      <button
-                        key={w}
-                        onClick={() => setWeaponType(w)}
-                        className={`font-pixel text-[10px] px-4 py-3 rounded uppercase transition-all duration-300 ${weaponType === w
-                          ? 'bg-green-500/30 border border-green-400 text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]'
-                          : 'bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:border-white/30'
-                          }`}
-                      >
-                        {w}
-                      </button>
-                    ))}
+                  {/* Ship Chassis Section */}
+                  <div className="relative group">
+                    <h3 className="font-pixel text-[10px] text-purple-400/80 mb-4 tracking-[0.2em] flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-purple-400/50"></span> VESSEL CHASSIS
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {(['fighter', 'saucer', 'blocky'] as ShipModelType[]).map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setShipModel(s)}
+                          className={`relative overflow-hidden font-pixel text-[9px] px-6 py-3 rounded-lg uppercase tracking-widest transition-all duration-500 ${shipModel === s
+                            ? 'text-purple-100 shadow-[0_0_20px_rgba(168,85,247,0.2)]'
+                            : 'text-gray-500 hover:text-gray-300 bg-white/[0.02] hover:bg-white/[0.05]'
+                            }`}
+                        >
+                          {shipModel === s && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/50 rounded-lg"></div>
+                          )}
+                          <span className="relative z-10">{s}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-2 border-t border-white/5">
+                  {/* Weapon System Section */}
+                  <div className="relative group">
+                    <h3 className="font-pixel text-[10px] text-green-400/80 mb-4 tracking-[0.2em] flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-green-400/50"></span> WEAPON SYSTEM
+                    </h3>
+                    <div className="flex flex-wrap gap-3">
+                      {(['default', 'shotgun', 'sniper'] as WeaponType[]).map((w) => (
+                        <button
+                          key={w}
+                          onClick={() => setWeaponType(w)}
+                          className={`relative overflow-hidden font-pixel text-[9px] px-6 py-3 rounded-lg uppercase tracking-widest transition-all duration-500 ${weaponType === w
+                            ? 'text-green-100 shadow-[0_0_20px_rgba(74,222,128,0.2)]'
+                            : 'text-gray-500 hover:text-gray-300 bg-white/[0.02] hover:bg-white/[0.05]'
+                            }`}
+                        >
+                          {weaponType === w && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/50 rounded-lg"></div>
+                          )}
+                          <span className="relative z-10">{w}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -171,6 +199,13 @@ function App() {
                 className="font-pixel text-xs px-6 py-3 bg-purple-500/20 border border-purple-400/40 text-purple-400 rounded hover:bg-purple-500/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all duration-300"
               >
                 CONTACT ME
+              </a>
+              <a
+                href="#"
+                download="Resume.pdf"
+                className="font-pixel text-xs px-6 py-3 bg-green-500/20 border border-green-400/40 text-green-400 rounded hover:bg-green-500/30 hover:shadow-[0_0_20px_rgba(74,222,128,0.3)] transition-all duration-300"
+              >
+                DOWNLOAD RESUME
               </a>
             </div>
           </div>
@@ -352,7 +387,7 @@ function App() {
             ].map((project, index) => (
               <div
                 key={project.title}
-                className="glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer scroll-reveal"
+                className={`glass-card p-6 group hover:scale-[1.02] transition-all duration-300 cursor-pointer scroll-reveal ${index === 6 ? 'lg:col-start-2' : ''}`}
                 style={{ transitionDelay: `${index * 0.1}s` }}
               >
 

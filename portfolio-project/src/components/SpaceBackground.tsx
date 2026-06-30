@@ -115,8 +115,11 @@ function Scene({ theme, shipModel, weaponType }: SpaceBackgroundProps) {
             screenShakeRef.current = THREE.MathUtils.lerp(screenShakeRef.current, 0, delta * 5);
         } else {
             screenShakeRef.current = 0;
-            state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, 0, delta * 5);
-            state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, 0, delta * 5);
+            // Add interactive 3D parallax based on mouse pointer
+            const targetX = state.pointer.x * 0.5;
+            const targetY = state.pointer.y * 0.5;
+            state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetX, delta * 5);
+            state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetY, delta * 5);
         }
     });
 
